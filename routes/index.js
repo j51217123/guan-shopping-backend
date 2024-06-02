@@ -144,8 +144,8 @@ router.get("/test", async (req, res) => {
                 "Content-Type": "application/x-www-form-urlencoded",
             },
         })
-        console.log("🚀 - response:", response)
-        res.send(response)
+        console.log("🚀 - response.data:", response.data)
+        res.send(response.data)
     } catch (error) {
         console.error(error)
         res.status(500).send("Error processing payment")
