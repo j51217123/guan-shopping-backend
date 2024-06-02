@@ -136,6 +136,11 @@ const CheckMacValue = CheckMacValueGen(ParamsBeforeCMV, algorithm, digest)
 
 //五、將所有的參數製作成 payload
 const AllParams = { ...ParamsBeforeCMV, CheckMacValue }
+const inputs = Object.entries(AllParams)
+    .map(function (param) {
+        return `<input name=${param[0]} value="${param[1].toString()}"><br/>`
+    })
+    .join("")
 
 router.get("/test", async (req, res) => {
     try {
@@ -199,9 +204,9 @@ router.get("/api/payment-data", (req, res) => {
         ReturnURL: ReturnURL,
         ChoosePayment: ChoosePayment,
         CheckMacValue: CheckMacValue,
-    }
-    res.json(paymentData)
-})
+    };
+    res.json(paymentData);
+});
 
 router.post("/payment/callback", (req, res) => {
     // 處理綠界金流的回調通知
