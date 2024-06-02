@@ -143,60 +143,55 @@ const inputs = Object.entries(AllParams)
     .join("")
 
 router.get("/test", async (req, res) => {
-    //六、製作送出畫面
-    const form = `
-        <form action="https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5" method="POST" name="payment" style="display: none;">
-            <input name="MerchantID" value="${AllParams.MerchantID}"/>
-            <input name="MerchantTradeNo" value="${AllParams.MerchantTradeNo}" />
-            <input name="MerchantTradeDate" value="${AllParams.MerchantTradeDate}" />
-            <input name="PaymentType" value="${AllParams.PaymentType}" />
-            <input name="TotalAmount" value="${AllParams.TotalAmount}" />
-            <input name="TradeDesc" value="${AllParams.TradeDesc}" />
-            <input name="ItemName" value="${AllParams.ItemName}" />
-            <input name="ReturnURL" value="${AllParams.ReturnURL}" />
-            <input name="ChoosePayment" value="${AllParams.ChoosePayment}" />
-            <input name="EncryptType" value="${AllParams.EncryptType}" />
-            <input name="ClientBackURL" value="${AllParams.ClientBackURL}" />
-            <input name="CheckMacValue" value="${AllParams.CheckMacValue}" />
-            <button type="submit">Submit</button>
-        </form>
-    `
-
-    //七、製作出 index.html
-    const fs = require("fs")
-
-    fs.writeFile("index.html", htmlContent, err => {
-        if (err) {
-            console.error("寫入檔案時發生錯誤:", err)
-        } else {
-            console.log("已建立 index.html")
-            import("open")
-                .then(open => {
-                    open.default("index.html")
-                })
-                .catch(error => {
-                    console.error("錯誤！", error)
-                })
-        }
-    })
-
     try {
         const response = await axios.post(APIURL, new URLSearchParams(AllParams), {
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
             },
         })
-        // res.send(response.data)
-        res.status(200).json({
-            status: "Success",
-            data: response,
-        })
-        console.log("🚀 - form:", form)
+        res.send(response.data)
+        console.log("🚀 - response.data:", response.data)
     } catch (error) {
         console.error(error)
         res.status(500).send("Error processing payment")
     }
 })
+
+//六、製作送出畫面
+const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>全方位金流測試</title>
+</head>
+<body>
+    <form method="post" action="${APIURL}">
+${inputs}
+<input type ="submit" value = "送出參數">
+    </form>
+</body>
+</html>
+`
+
+//七、製作出 index.html
+const fs = require("fs")
+
+fs.writeFile("index.html", htmlContent, err => {
+    if (err) {
+        console.error("寫入檔案時發生錯誤:", err)
+    } else {
+        console.log("已建立 index.html")
+        import("open")
+            .then(open => {
+                open.default("index.html")
+            })
+            .catch(error => {
+                console.error("錯誤！", error)
+            })
+    }
+})
+
+
 
 router.post("/payment/callback", (req, res) => {
     // 處理綠界金流的回調通知
