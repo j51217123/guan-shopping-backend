@@ -10,15 +10,14 @@ const { MERCHANTID, HASHKEY, HASHIV, HOST } = process.env
 const corsOptions = {
     origin: "*",
     optionsSuccessStatus: 200,
-    header: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    },
-}
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+};
+
 
 router.use(cors(corsOptions))
-
+router.use(express.urlencoded({ extended: true }))
+router.use(express.json())
 /* GET home page. */
 router.get("/", function (req, res, next) {
     res.render("index", { title: "Express" })
