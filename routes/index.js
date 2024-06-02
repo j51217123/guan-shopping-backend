@@ -186,6 +186,23 @@ fs.writeFile("index.html", htmlContent, err => {
     }
 })
 
+router.get("/api/payment-data", (req, res) => {
+    const paymentData = {
+        MerchantID: MerchantID,
+        MerchantTradeNo: MerchantTradeNo,
+        MerchantTradeDate: MerchantTradeDate.toString(),
+        PaymentType: "aio",
+        EncryptType: 1,
+        TotalAmount: TotalAmount,
+        TradeDesc: TradeDesc,
+        ItemName: ItemName,
+        ReturnURL: ReturnURL,
+        ChoosePayment: ChoosePayment,
+        CheckMacValue: CheckMacValue,
+    }
+    res.json(paymentData)
+})
+
 router.post("/payment/callback", (req, res) => {
     // 處理綠界金流的回調通知
     console.log(req.body)
