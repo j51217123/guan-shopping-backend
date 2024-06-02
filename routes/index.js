@@ -152,6 +152,40 @@ router.get("/test", async (req, res) => {
     }
 })
 
+//六、製作送出畫面
+const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>全方位金流測試</title>
+</head>
+<body>
+    <form method="post" action="${APIURL}">
+${inputs}
+<input type ="submit" value = "送出參數">
+    </form>
+</body>
+</html>
+`
+
+//七、製作出 index.html
+const fs = require("fs")
+
+fs.writeFile("index.html", htmlContent, err => {
+    if (err) {
+        console.error("寫入檔案時發生錯誤:", err)
+    } else {
+        console.log("已建立 index.html")
+        import("open")
+            .then(open => {
+                open.default("index.html")
+            })
+            .catch(error => {
+                console.error("錯誤！", error)
+            })
+    }
+})
+
 router.post("/payment/callback", (req, res) => {
     // 處理綠界金流的回調通知
     console.log(req.body)
