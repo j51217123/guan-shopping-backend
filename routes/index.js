@@ -47,7 +47,7 @@ let isStage = true // 測試環境： true；正式環境：false
 const TotalAmount = "100"
 const TradeDesc = "測試敘述"
 const ItemName = "測試名稱"
-const ReturnURL = "https://www.ecpay.com.tw"
+const ReturnURL = "https://guan-shopping-backend.zeabur.app/payment/callback"
 const ChoosePayment = "ALL"
 
 ////////////////////////以下參數不用改////////////////////////
@@ -144,11 +144,19 @@ router.get("/test", async (req, res) => {
                 "Content-Type": "application/x-www-form-urlencoded",
             },
         })
-        res.send(response.data)
+        console.log("🚀 - response:", response)
+        res.send(response)
     } catch (error) {
         console.error(error)
         res.status(500).send("Error processing payment")
     }
+})
+
+router.post("/payment/callback", (req, res) => {
+    // 處理綠界金流的回調通知
+    console.log(req.body)
+    // 根據回調通知的內容更新訂單狀態等操作
+    res.send("OK")
 })
 
 module.exports = router
