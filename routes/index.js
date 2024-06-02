@@ -55,8 +55,16 @@ const stage = isStage ? "-stage" : ""
 const algorithm = "sha256"
 const digest = "hex"
 const APIURL = `https://payment${isStage ? "-stage" : ""}.ecpay.com.tw/Cashier/AioCheckOut/V5`
-// const MerchantTradeNo = `od${Date.now()}`
-const MerchantTradeNo = `od${Date.now()}${Math.floor(Math.random() * 1000)}`
+const MerchantTradeNo = `od${new Date().getFullYear()}${(new Date().getMonth() + 1)
+    .toString()
+    .padStart(2, "0")}${new Date().getDate().toString().padStart(2, "0")}${new Date()
+    .getHours()
+    .toString()
+    .padStart(2, "0")}${new Date().getMinutes().toString().padStart(2, "0")}${new Date()
+    .getSeconds()
+    .toString()
+    .padStart(2, "0")}${new Date().getMilliseconds().toString().padStart(2, "0")}`
+
 const MerchantTradeDate = new Date().toLocaleDateString("zh-TW", {
     year: "numeric",
     month: "2-digit",
