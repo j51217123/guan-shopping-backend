@@ -16,26 +16,6 @@ const corsOptions = {
 
 router.use(cors(corsOptions))
 
-/* GET home page. */
-router.get("/", function (req, res, next) {
-    res.render("index", { title: "Express" })
-})
-
-const data = [
-    {
-        user: "ovis",
-        age: 22,
-    },
-    {
-        user: "jenny",
-        age: 24,
-    },
-]
-
-// router.get("/test", (req, res) => {
-//     res.send(data)
-// })
-
 ////////////////////////改以下參數即可////////////////////////
 //一、選擇帳號，是否為測試環境
 const MerchantID = "3002607" //必填
@@ -76,18 +56,18 @@ const MerchantTradeDate = new Date().toLocaleDateString("zh-TW", {
 })
 
 //三、計算 CheckMacValue 之前
-let ParamsBeforeCMV = {
-    MerchantID: MerchantID,
-    MerchantTradeNo: MerchantTradeNo,
-    MerchantTradeDate: MerchantTradeDate.toString(),
-    PaymentType: "aio",
-    EncryptType: 1,
-    TotalAmount: TotalAmount,
-    TradeDesc: TradeDesc,
-    ItemName: ItemName,
-    ReturnURL: ReturnURL,
-    ChoosePayment: ChoosePayment,
-}
+// let ParamsBeforeCMV = {
+//     MerchantID: MerchantID,
+//     MerchantTradeNo: MerchantTradeNo,
+//     MerchantTradeDate: MerchantTradeDate.toString(),
+//     PaymentType: "aio",
+//     EncryptType: 1,
+//     TotalAmount: TotalAmount,
+//     TradeDesc: TradeDesc,
+//     ItemName: ItemName,
+//     ReturnURL: ReturnURL,
+//     ChoosePayment: ChoosePayment,
+// }
 
 //四、計算 CheckMacValue
 function CheckMacValueGen(parameters, algorithm, digest) {
@@ -132,64 +112,112 @@ function CheckMacValueGen(parameters, algorithm, digest) {
     const Step6 = Step5.toUpperCase()
     return Step6
 }
-const CheckMacValue = CheckMacValueGen(ParamsBeforeCMV, algorithm, digest)
+// const CheckMacValue = CheckMacValueGen(ParamsBeforeCMV, algorithm, digest)
 
 //五、將所有的參數製作成 payload
-const AllParams = { ...ParamsBeforeCMV, CheckMacValue }
-const inputs = Object.entries(AllParams)
+// const AllParams = { ...ParamsBeforeCMV, CheckMacValue }
+// const inputs = Object.entries(AllParams)
+//     .map(function (param) {
+//         return `<input name=${param[0]} value="${param[1].toString()}"><br/>`
+//     })
+//     .join("")
+
+// router.get("/test", async (req, res) => {
+//     try {
+//         const response = await axios.post(APIURL, new URLSearchParams(AllParams), {
+//             headers: {
+//                 "Content-Type": "application/x-www-form-urlencoded",
+//             },
+//         })
+//         res.send(response.data)
+//         console.log("🚀 - response.data:", response.data)
+//     } catch (error) {
+//         console.error(error)
+//         res.status(500).send("Error processing payment")
+//     }
+// })
+
+//六、製作送出畫面
+// const htmlContent = `
+// <!DOCTYPE html>
+// <html>
+// <head>
+//     <title>全方位金流測試</title>
+// </head>
+// <body>
+//     <form method="post" action="${APIURL}">
+// ${inputs}
+// <input type ="submit" value = "送出參數">
+//     </form>
+// </body>
+// </html>
+// `
+
+router.get("/test", async (req, res) => {
+    const { totalAmount, tradeDesc, itemName } = req.query
+    let ParamsBeforeCMV = {
+        MerchantID: MerchantID,
+        MerchantTradeNo: MerchantTradeNo,
+        MerchantTradeDate: MerchantTradeDate.toString(),
+        PaymentType: "aio",
+        EncryptType: 1,
+        TotalAmount: totalAmount,
+        TradeDesc: tradeDesc,
+        ItemName: itemName,
+        ReturnURL: ReturnURL,
+        ChoosePayment: ChoosePayment,
+    }
+
+    const CheckMacValue = CheckMacValueGen(ParamsBeforeCMV, algorithm, digest)
+    const AllParams = { ...ParamsBeforeCMV, CheckMacValue }
+    const inputs = Object.entries(AllParams)
     .map(function (param) {
         return `<input name=${param[0]} value="${param[1].toString()}"><br/>`
     })
     .join("")
+    const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>全方位金流測試</title>
+        </head>
+        <body>
+            <form method="post" action="${APIURL}">
+        ${inputs}
+        <input type ="submit" value = "送出參數">
+            </form>
+        </body>
+        </html>
+    `
 
-router.get("/test", async (req, res) => {
     try {
-        const response = await axios.post(APIURL, new URLSearchParams(AllParams), {
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-        })
-        res.send(response.data)
-        console.log("🚀 - response.data:", response.data)
+        console.log("🚀 - htmlContent:", htmlContent)
+        res.send(htmlContent)
     } catch (error) {
         console.error(error)
         res.status(500).send("Error processing payment")
     }
 })
 
-//六、製作送出畫面
-const htmlContent = `
-<!DOCTYPE html>
-<html>
-<head>
-    <title>全方位金流測試</title>
-</head>
-<body>
-    <form method="post" action="${APIURL}">
-${inputs}
-<input type ="submit" value = "送出參數">
-    </form>
-</body>
-</html>
-`
 
-//七、製作出 index.html
-const fs = require("fs")
 
-fs.writeFile("index.html", htmlContent, err => {
-    if (err) {
-        console.error("寫入檔案時發生錯誤:", err)
-    } else {
-        console.log("已建立 index.html")
-        import("open")
-            .then(open => {
-                open.default("index.html")
-            })
-            .catch(error => {
-                console.error("錯誤！", error)
-            })
-    }
-})
+// //七、製作出 index.html
+// const fs = require("fs")
+
+// fs.writeFile("index.html", htmlContent, err => {
+//     if (err) {
+//         console.error("寫入檔案時發生錯誤:", err)
+//     } else {
+//         console.log("已建立 index.html")
+//         import("open")
+//             .then(open => {
+//                 open.default("index.html")
+//             })
+//             .catch(error => {
+//                 console.error("錯誤！", error)
+//             })
+//     }
+// })
 
 
 
