@@ -192,6 +192,7 @@ router.get("/test", async (req, res) => {
     `
 
     try {
+        res.set('Access-Control-Allow-Origin', '*')
         res.set('Content-Type', 'text/html; charset=utf-8')
         console.log("🚀 - htmlContent:", htmlContent)
         res.send(htmlContent)
