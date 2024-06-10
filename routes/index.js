@@ -166,6 +166,7 @@ router.get("/test", async (req, res) => {
         ItemName: itemName,
         ReturnURL: ReturnURL,
         ChoosePayment: ChoosePayment,
+        ClientBackURL: "https://guan-shopping-web.web.app/payment-result",
     }
 
     const CheckMacValue = CheckMacValueGen(ParamsBeforeCMV, algorithm, digest)
@@ -189,7 +190,7 @@ router.get("/test", async (req, res) => {
         </body>
         </html>
     `
-    
+
     try {
         res.set('Content-Type', 'text/html; charset=utf-8')
         console.log("🚀 - htmlContent:", htmlContent)
